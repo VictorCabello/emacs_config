@@ -1,15 +1,37 @@
-(require 'package) ;; You might already have this line
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-(package-initialize) ;; You might already have this line
+;; Set path to dependencies
+(setq site-lisp-dir
+      (expand-file-name "site-lisp" user-emacs-directory))
 
-(require 'monokai-theme) 
+(setq settings-dir
+      (expand-file-name "settings" user-emacs-directory))
+
+;; Set up load path
+(add-to-list 'load-path settings-dir)
+(add-to-list 'load-path site-lisp-dir)
+
+;; Settings for currently logged in user
+(setq user-settings-dir
+      (concat user-emacs-directory "users/" user-login-name))
+(add-to-list 'load-path user-settings-dir)
+
+;; Add external projects to load path
+(dolist (project (directory-files site-lisp-dir t "\\w+"))
+  (when (file-directory-p project)
+    (add-to-list 'load-path project)))
+
+;; Write backup files to own directory
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name
+                 (concat user-emacs-directory "backups")))))
+
+;; Setup packages
+(require 'setup-package)
+
+
+(require-package 'monokai-theme) 
 (load-theme 'monokai t)
 
-(require 'ace-jump-mode)
+(require-package 'ace-jump-mode)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 ;; When org-mode starts it (org-mode-map) overrides the ace-jump-mode.
 (add-hook 'org-mode-hook
