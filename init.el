@@ -54,12 +54,22 @@
 (require-package 'groovy-mode)
 
 ;; Setup gradle
+(if (and (= emacs-major-version 24) (< emacs-minor-version 5))
+    (require 'cl))
 (require-package 'gradle-mode)
 
+
 ;; Setup autocomplete
-(require-package 'auto-complete) 
-(ac-config-default)
-(global-auto-complete-mode t)
+(require 'init-auto-complete) 
+
+;; Setup Multiple major modes
+(require 'init-mmm)
 
 ;; Setup evil-mode
 (require 'evil-setup)
+
+;; No tabs
+(setq-default indent-tabs-mode nil)
+
+;; SEtup emmet
+(require 'init-emmet)
